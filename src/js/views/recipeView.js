@@ -26,6 +26,14 @@ class RecipeView {
     this.#parentElement.innerHTML = '';
     this.#parentElement.insertAdjacentHTML('afterbegin', markup);
   };
+
+  /**publisher :basically need to get access to subscriber(in this cases is the handler function)
+  - it need to part of public api  SO that we can call it in controller
+  */
+  addHandlerRecipe(handler) {
+    ['hashchange', 'load'].forEach(ev => window.addEventListener(ev, handler));
+  }
+
   #generateMarkup() {
     return `
     <figure class="recipe__fig">

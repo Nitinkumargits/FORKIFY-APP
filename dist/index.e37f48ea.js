@@ -602,8 +602,10 @@ const controllRecipes = async function() {
         if (!id) return;
         (0, _recipeViewJsDefault.default).renderSpinner();
         //1. load Recipe
-        /* this loadRecipe funtion is async funtion this return a promise ,here we have to avoid the promise
-    (this is the situation that one async function return a another async function), an aysnc function return a promise we need to handle when ever we call the async function */ await _modelJs.loadRecipe(id);
+        /*
+     this loadRecipe funtion is async funtion this return a promise ,here we have to avoid the promise
+     (this is the situation that one async function return a another async function), an aysnc function return a promise we need to handle when ever we call the async function
+     */ await _modelJs.loadRecipe(id);
         //2. Rendering recipe
         /**
      * here we call the recipeView.render(here we pass the data),this render() will accept data then
@@ -614,12 +616,11 @@ const controllRecipes = async function() {
         alert(err);
     }
 };
-// window.addEventListener('hashchange', controllRecipes);
-// window.addEventListener('load', controllRecipes);
-[
-    "hashchange",
-    "load"
-].forEach((ev)=>window.addEventListener(ev, controllRecipes));
+const init = function() {
+    //Subscriber
+    (0, _recipeViewJsDefault.default).addHandlerRecipe(controllRecipes);
+};
+init();
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./model.js":"Y4A21","./views/recipeView.js":"l60JC"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
@@ -2566,6 +2567,14 @@ class RecipeView {
         this.#parentElement.innerHTML = "";
         this.#parentElement.insertAdjacentHTML("afterbegin", markup);
     };
+    /**publisher :basically need to get access to subscriber(in this cases is the handler function)
+  - it need to part of public api  SO that we can call it in controller
+  */ addHandlerRecipe(handler) {
+        [
+            "hashchange",
+            "load"
+        ].forEach((ev)=>window.addEventListener(ev, handler));
+    }
     #generateMarkup() {
         return `
     <figure class="recipe__fig">
