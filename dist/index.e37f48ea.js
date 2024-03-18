@@ -613,7 +613,8 @@ const controllRecipes = async function() {
      */ (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
     /**or */ // const recipeView = new recipeView(model.state.recipe);
     } catch (err) {
-        alert(err);
+    //catch the error from thrown by loadRecipe() which is present in (model.js),now we can render UI
+    // recipeView.renderError(`${err} 🔥🔥🔥`);
     }
 };
 const init = function() {
@@ -2496,7 +2497,7 @@ const loadRecipe = async function(id) {
             ingredients: recipe.ingredients
         };
     } catch (err) {
-        console.error(`${err} \u{1F525}\u{1F525}\u{1F525}`);
+        throw err; //to controller.js
     }
 };
 
@@ -2547,6 +2548,8 @@ var _fractional = require("fractional"); //package we import from nmp, we didn't
 class RecipeView {
     #parentElement = document.querySelector(".recipe");
     #data;
+    #message = "";
+    #errorMessage = "We could not find the recipe. Please try another one";
     /**will get the data from  */ render(data) {
         this.#data = data;
         const markup = this.#generateMarkup();
@@ -2556,7 +2559,7 @@ class RecipeView {
     #clear() {
         this.#parentElement.innerHTML = "";
     }
-    renderSpinner = function() {
+    renderSpinner() {
         const markup = `
     <div class="spinner">
     <svg>
@@ -2564,9 +2567,37 @@ class RecipeView {
     </svg>
   </div>
     `;
-        this.#parentElement.innerHTML = "";
+        this.#clear();
         this.#parentElement.insertAdjacentHTML("afterbegin", markup);
-    };
+    }
+    renderError(message = this.#errorMessage) {
+        const markup = `
+      <div class="error">
+            <div>
+              <svg>
+                <use href="${(0, _iconsSvgDefault.default)}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>
+            `;
+        this.#clear();
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    renderMessage(message = this.#message) {
+        const markup = `
+      <div class="message">
+            <div>
+              <svg>
+                <use href="${(0, _iconsSvgDefault.default)}#icon-smile"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>
+            `;
+        this.#clear();
+        this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
     /**publisher :basically need to get access to subscriber(in this cases is the handler function)
   - it need to part of public api  SO that we can call it in controller
   */ addHandlerRecipe(handler) {

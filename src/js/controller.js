@@ -33,7 +33,8 @@ const controllRecipes = async function () {
     /**or */
     // const recipeView = new recipeView(model.state.recipe);
   } catch (err) {
-    alert(err);
+    //catch the error from thrown by loadRecipe() which is present in (model.js),now we can render UI
+    // recipeView.renderError(`${err} 🔥🔥🔥`);
   }
 };
 
