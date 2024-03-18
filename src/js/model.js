@@ -3,8 +3,16 @@ import { API_URL } from './config.js';
 import { getJSON } from './helper.js';
 
 /*this big state object which contain the recipe,into which the controller will then grab and take the recipe out of there, this going to work bcz there is the live connection btw the import and export */
+/**
+ *state contain all data we need to build our application.
+ *all the data about the application also include the search query
+ */
 export const state = {
   recipe: {},
+  search: {
+    query: '',
+    result: [],
+  },
 };
 
 /*this function is responsible for fecting data from the Forkify API, 
@@ -17,7 +25,7 @@ export const state = {
 
 export const loadRecipe = async function (id) {
   try {
-    const data = await getJSON(`${API_URL}/${id}`);
+    const data = await getJSON(`${API_URL}${id}`);
     const { recipe } = data.data;
 
     state.recipe = {
@@ -31,6 +39,34 @@ export const loadRecipe = async function (id) {
       ingredients: recipe.ingredients,
     };
   } catch (err) {
+    console.error(`${err} 🔥🔥🔥`);
     throw err; //to controller.js
   }
 };
+
+/**
+ * create a function and export it so that it can use by the controler,since it will perform AJAX calls
+ * it must be a async function,this function is called by the controller,so it the controller will tell
+ * this function what to search for as we pass a query(string) to loadSearchResult function, which we can pluck into API call
+ */
+export const loadSearchResult = async function (query) {
+  try {
+    state.search.query = query;
+    const data = await getJSON(`${API_URL}?search=${query}`);
+
+    state.search.result = data.data.recipes.map(rec => {
+      return {
+        id: rec.id,
+        title: rec.title,
+        publisher: rec.publisher,
+        image: rec.image_url,
+      };
+    });
+    // console.log(state.search.result);
+  } catch (err) {
+    console.error(`${err} 🔥🔥🔥`);
+    throw err; //to controller.js
+  }
+};
+
+// loadSearchResult('pizza');s
