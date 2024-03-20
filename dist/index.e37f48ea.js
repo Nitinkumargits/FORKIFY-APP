@@ -594,8 +594,12 @@ var _searchViewJs = require("./views/searchView.js");
 var _searchViewJsDefault = parcelHelpers.interopDefault(_searchViewJs);
 var _resultViewJs = require("./views/resultView.js");
 var _resultViewJsDefault = parcelHelpers.interopDefault(_resultViewJs);
+var _paginationViewJs = require("../js/views/paginationView.js");
+var _paginationViewJsDefault = parcelHelpers.interopDefault(_paginationViewJs);
 ///////////////////////////////////////
-/**the keep up the state from page,activate the hot module reloadiing,(Not real JavaScript) it come from parcel */ if (module.hot) module.hot.accept();
+/**the keep up the state from page,activate the hot module reloadiing,(Not real JavaScript) it come from parcel */ // if (module.hot) {
+//   module.hot.accept();
+// }
 const controllRecipes = async function() {
     try {
         //getting hash from URL
@@ -633,10 +637,23 @@ const controllRecipes = async function() {
         await _modelJs.loadSearchResult(query);
         //3. render result
         // console.log(model.state.search.result);
-        (0, _resultViewJsDefault.default).render(_modelJs.state.search.result);
+        // resultView.render(model.state.search.result);//all result
+        //Now we want some result
+        (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultsPage());
+        //4.initial pagination button
+        (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
     } catch (err) {
         console.log(err);
     }
+};
+const controllPagination = function(goToPage) {
+    // console.log(goToPage);
+    //1. render new result
+    // resultView.render(model.state.search.result);//all result
+    //Now we want some result
+    (0, _resultViewJsDefault.default).render(_modelJs.getSearchResultsPage(goToPage));
+    //2.initial new pagination button
+    (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
 };
 /**
  * if you run this there will be no result,bcz nothing will be found on the Search-IN-UI ,In order to make this work now we need to listen for the event,clicking this button on search field  or submitting this form, on that event we call the  controllSearchResult() function,not in begining when the script loads */ /** In order to do that we use the Publisher-subscriber pattern
@@ -647,10 +664,11 @@ const controllRecipes = async function() {
     //Subscriber
     (0, _recipeViewJsDefault.default).addHandlerRecipe(controllRecipes);
     (0, _searchViewJsDefault.default).addHandlerSearch(controllSearchResult);
+    (0, _paginationViewJsDefault.default).addHandlerClick(controllPagination);
 };
 init();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./model.js":"Y4A21","./views/recipeView.js":"l60JC","./views/searchView.js":"9OQAM","./views/resultView.js":"f70O5"}],"gkKU3":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./model.js":"Y4A21","./views/recipeView.js":"l60JC","./views/searchView.js":"9OQAM","./views/resultView.js":"f70O5","../js/views/paginationView.js":"6z7bi"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -2504,6 +2522,7 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state);
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
 parcelHelpers.export(exports, "loadSearchResult", ()=>loadSearchResult);
+parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage);
 var _regeneratorRuntime = require("regenerator-runtime");
 var _configJs = require("./config.js");
 var _helperJs = require("./helper.js");
@@ -2511,7 +2530,9 @@ const state = {
     recipe: {},
     search: {
         query: "",
-        result: []
+        result: [],
+        page: 1,
+        resultPerPage: (0, _configJs.RESULT_PER_Page)
     }
 };
 const loadRecipe = async function(id) {
@@ -2550,15 +2571,23 @@ const loadSearchResult = async function(query) {
         console.error(`${err} \u{1F525}\u{1F525}\u{1F525}`);
         throw err; //to controller.js
     }
-}; // loadSearchResult('pizza');s
+};
+const getSearchResultsPage = function(page = state.search.page) {
+    state.search.page = page;
+    const start = (page - 1) * state.search.resultPerPage; //0 (10 is the amt of page we want)
+    const end = page * state.search.resultPerPage; //9
+    return state.search.result.slice(start, end);
+};
 
 },{"regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./config.js":"k5Hzs","./helper.js":"lVRAz"}],"k5Hzs":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "API_URL", ()=>API_URL);
 parcelHelpers.export(exports, "TIMEOUT_SEC", ()=>TIMEOUT_SEC);
+parcelHelpers.export(exports, "RESULT_PER_Page", ()=>RESULT_PER_Page);
 const API_URL = "https://forkify-api.herokuapp.com/api/v2/recipes/";
 const TIMEOUT_SEC = 10;
+const RESULT_PER_Page = 10;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lVRAz":[function(require,module,exports) {
 /**Goal of this file/module to contain helper function that we can Reuse in our Project  */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -3114,6 +3143,83 @@ class ResultView extends (0, _viewDefault.default) {
 }
 exports.default = new ResultView();
 
-},{"./view":"bWlJ9","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../../img/icons.svg":"loVOp"}]},["hycaY","aenu9"], "aenu9", "parcelRequire6d3a")
+},{"./view":"bWlJ9","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../../img/icons.svg":"loVOp"}],"6z7bi":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./view");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class PaginationView extends (0, _viewDefault.default) {
+    _parentElement = document.querySelector(".pagination");
+    /**
+      Publisher(listen for the event)i.e addHandlerClick() which recive a handler() function->(in our case is the controllPagination inside the controller.js) with this we able to listen for the event here in View, and at the same time handle the event from the controller,
+      here we gonna use eventDelegation bcz theres going to Two buttons and we don't want to listen each of  them indivially ,instead we add event listern to common parent element(this._parentElement)
+  */ addHandlerClick(handler) {
+        this._parentElement.addEventListener("click", function(e) {
+            const btn = e.target.closest(".btn--inline");
+            if (!btn) return;
+            ///////dataset.goto
+            const goToPage = Number(btn.dataset.goto);
+            // go to controller.js-->controllPagination()
+            handler(goToPage);
+        });
+    }
+    /**
+   _generateMarkup() :that is the method, render()--(present in view.js) method is going to call in order to    genrate  markup for the view we are working on it,every view we are render something to UI
+   */ _generateMarkup() {
+        const currentPage = this._data.page;
+        /**
+      //(this._data is the entire Search result object)
+      In order to figure out we are on page-1 and on other pages, we need to know how many pages there are.
+      60 result/10 result per page= 6 pages
+     */ const numPage = Math.ceil(this._data.result.length / this._data.resultPerPage);
+        //page 1,and there are other pages
+        if (currentPage == 1 && numPage > 1) return `
+          <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+                <span>Page ${currentPage + 1}</span>
+                <svg class="search__icon">
+                  <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+                </svg>
+          </button>
+      `;
+        //last page
+        if (currentPage === numPage && numPage > 1) return `
+          <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
+            <svg class="search__icon">
+              <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
+            </svg>
+              <span>Page ${currentPage - 1}</span>
+          </button>
+
+        
+      `;
+        //other pages
+        if (currentPage < numPage) return `
+            <button data-goto="${currentPage - 1}" class="btn--inline pagination__btn--prev">
+              <svg class="search__icon">
+                <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
+              </svg>
+                <span>Page ${currentPage - 1}</span>
+            </button>
+            <button data-goto="${currentPage + 1}" class="btn--inline pagination__btn--next">
+                <span>Page ${currentPage + 1}</span>
+                <svg class="search__icon">
+                  <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+                </svg>
+            </button>
+        `;
+        //page 1 and there are NO other pages
+        return "";
+    }
+}
+exports.default = new PaginationView(); /**
+ we need  a way of knowing, which is the page we need to go now, but how would JavaScript know that it should now actually display it result of paticular page, we need to establish connetion b/w the DOM and code -> we can do that
+ with help of custom data-attribute,
+
+ * create a data-attribute to each of the buttons, which will contains pages we want to go to then in our code we can read that data make  our application go to that page
+ */ 
+
+},{"./view":"bWlJ9","url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["hycaY","aenu9"], "aenu9", "parcelRequire6d3a")
 
 //# sourceMappingURL=index.e37f48ea.js.map

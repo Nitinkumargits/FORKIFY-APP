@@ -4,12 +4,13 @@ import * as model from './model.js';
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultView from './views/resultView.js';
+import paginationView from '../js/views/paginationView.js';
 
 ///////////////////////////////////////
 /**the keep up the state from page,activate the hot module reloadiing,(Not real JavaScript) it come from parcel */
-if (module.hot) {
-  module.hot.accept();
-}
+// if (module.hot) {
+//   module.hot.accept();
+// }
 
 const controllRecipes = async function () {
   try {
@@ -53,10 +54,24 @@ const controllSearchResult = async function () {
     await model.loadSearchResult(query);
     //3. render result
     // console.log(model.state.search.result);
-    resultView.render(model.state.search.result);
+    // resultView.render(model.state.search.result);//all result
+    //Now we want some result
+    resultView.render(model.getSearchResultsPage());
+    //4.initial pagination button
+    paginationView.render(model.state.search);
   } catch (err) {
     console.log(err);
   }
+};
+
+const controllPagination = function (goToPage) {
+  // console.log(goToPage);
+  //1. render new result
+  // resultView.render(model.state.search.result);//all result
+  //Now we want some result
+  resultView.render(model.getSearchResultsPage(goToPage));
+  //2.initial new pagination button
+  paginationView.render(model.state.search);
 };
 /**
  * if you run this there will be no result,bcz nothing will be found on the Search-IN-UI ,In order to make this work now we need to listen for the event,clicking this button on search field  or submitting this form, on that event we call the  controllSearchResult() function,not in begining when the script loads */
@@ -70,6 +85,7 @@ const init = function () {
   //Subscriber
   recipeView.addHandlerRecipe(controllRecipes);
   searchView.addHandlerSearch(controllSearchResult);
+  paginationView.addHandlerClick(controllPagination);
 };
 
 init();

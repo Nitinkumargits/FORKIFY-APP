@@ -1,9 +1,9 @@
 import { async } from 'regenerator-runtime';
-import { API_URL } from './config.js';
+import { API_URL, RESULT_PER_Page } from './config.js';
 import { getJSON } from './helper.js';
 
-/*this big state object which contain the recipe,into which the controller will then grab and take the recipe out of there, this going to work bcz there is the live connection btw the import and export */
 /**
+ * this big state object which contain the recipe,into which the controller will then grab  and take the recipe out of there, this going to work bcz there is the live connection btw the  import and export
  *state contain all data we need to build our application.
  *all the data about the application also include the search query
  */
@@ -12,13 +12,15 @@ export const state = {
   search: {
     query: '',
     result: [],
+    page: 1,
+    resultPerPage: RESULT_PER_Page,
   },
 };
 
-/*this function is responsible for fecting data from the Forkify API, 
+/** 
+ * this function is responsible for fecting data from the Forkify API, 
  loadRecipe()-function not return any thing ,all it will do
- is to change our state object*/
-/**
+ is to change our state object
  *here the loadRecipe will not return anything ,therefore we are  not storing any result in new variable
  instead we get the access the state.recipe
  */
@@ -69,4 +71,12 @@ export const loadSearchResult = async function (query) {
   }
 };
 
-// loadSearchResult('pizza');s
+/**
+ * not an async function bcz we already have the search result loaded
+ */
+export const getSearchResultsPage = function (page = state.search.page) {
+  state.search.page = page;
+  const start = (page - 1) * state.search.resultPerPage; //0 (10 is the amt of page we want)
+  const end = page * state.search.resultPerPage; //9
+  return state.search.result.slice(start, end);
+};
