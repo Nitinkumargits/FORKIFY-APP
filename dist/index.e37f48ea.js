@@ -646,6 +646,12 @@ const controllRecipes = async function() {
         console.log(err);
     }
 };
+const controllServings = function(newServings) {
+    //update the  recipe servings (in state)
+    _modelJs.updateServings(newServings);
+    //update the recipe view
+    (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
+};
 const controllPagination = function(goToPage) {
     // console.log(goToPage);
     //1. render new result
@@ -663,6 +669,7 @@ const controllPagination = function(goToPage) {
  */ const init = function() {
     //Subscriber
     (0, _recipeViewJsDefault.default).addHandlerRecipe(controllRecipes);
+    (0, _recipeViewJsDefault.default).addHandlerUpdateServings(controllServings);
     (0, _searchViewJsDefault.default).addHandlerSearch(controllSearchResult);
     (0, _paginationViewJsDefault.default).addHandlerClick(controllPagination);
 };
@@ -2523,6 +2530,7 @@ parcelHelpers.export(exports, "state", ()=>state);
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
 parcelHelpers.export(exports, "loadSearchResult", ()=>loadSearchResult);
 parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage);
+parcelHelpers.export(exports, "updateServings", ()=>updateServings);
 var _regeneratorRuntime = require("regenerator-runtime");
 var _configJs = require("./config.js");
 var _helperJs = require("./helper.js");
@@ -2578,8 +2586,15 @@ const getSearchResultsPage = function(page = state.search.page) {
     const end = page * state.search.resultPerPage; //9
     return state.search.result.slice(start, end);
 };
+const updateServings = function(newServings) {
+    state.recipe.ingredients.forEach((ing)=>{
+        ing.quantity = ing.quantity * newServings / state.recipe.servings;
+    //newQt=oldQT * newServings/oldServings // 2 * 8/4= 4
+    });
+    state.recipe.servings = newServings;
+};
 
-},{"regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./config.js":"k5Hzs","./helper.js":"lVRAz"}],"k5Hzs":[function(require,module,exports) {
+},{"regenerator-runtime":"dXNgZ","./config.js":"k5Hzs","./helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "API_URL", ()=>API_URL);
@@ -2619,7 +2634,7 @@ const getJSON = async function(url) {
     }
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./config":"k5Hzs"}],"l60JC":[function(require,module,exports) {
+},{"./config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"l60JC":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg");
@@ -2636,6 +2651,15 @@ class RecipeView extends (0, _viewJsDefault.default) {
             "hashchange",
             "load"
         ].forEach((ev)=>window.addEventListener(ev, handler));
+    }
+    addHandlerUpdateServings(handler) {
+        //event delegation
+        this._parentElement.addEventListener("click", function(e) {
+            const btn = e.target.closest(".btn--update-servings");
+            if (!btn) return;
+            const updateTo = +btn.dataset.updateTo;
+            if (updateTo > 0) handler(updateTo);
+        });
     }
     //_generateMarkup must be unique to every single view
     _generateMarkup() {
@@ -2663,12 +2687,12 @@ class RecipeView extends (0, _viewJsDefault.default) {
     <span class="recipe__info-text">servings</span>
 
     <div class="recipe__info-buttons">
-      <button class="btn--tiny btn--increase-servings">
+      <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings - 1}">
         <svg>
           <use href="${0, _iconsSvgDefault.default}#icon-minus-circle"></use>
         </svg>
       </button>
-      <button class="btn--tiny btn--increase-servings">
+      <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings + 1}">
         <svg>
           <use href="${0, _iconsSvgDefault.default}#icon-plus-circle"></use>
         </svg>

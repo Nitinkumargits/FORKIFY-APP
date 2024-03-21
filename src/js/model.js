@@ -80,3 +80,13 @@ export const getSearchResultsPage = function (page = state.search.page) {
   const end = page * state.search.resultPerPage; //9
   return state.search.result.slice(start, end);
 };
+/**
+ this updateServings function will do is to reach into the state(recipe ingreident) and then change the qunatity in each ingridents
+ */
+export const updateServings = function (newServings) {
+  state.recipe.ingredients.forEach(ing => {
+    ing.quantity = (ing.quantity * newServings) / state.recipe.servings;
+    //newQt=oldQT * newServings/oldServings // 2 * 8/4= 4
+  });
+  state.recipe.servings = newServings;
+};
