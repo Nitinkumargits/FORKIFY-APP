@@ -15,6 +15,7 @@ export const state = {
     page: 1,
     resultPerPage: RESULT_PER_Page,
   },
+  bookmarks: [],
 };
 
 /** 
@@ -40,6 +41,14 @@ export const loadRecipe = async function (id) {
       cookingTime: recipe.cooking_time,
       ingredients: recipe.ingredients,
     };
+    /** 
+     as we got the loadSearchResult data and store it in state then we can check if there is the recipe with the same id  in bookmark state and if it is then we mark the current recipe that we just loaded from the API as bookmarked  set to true
+    */
+    if (state.bookmarks.some(bookmark => bookmark.id === id)) {
+      state.recipe.bookmarked = true;
+    } else {
+      state.recipe.bookmarked = false;
+    }
   } catch (err) {
     console.error(`${err} 🔥🔥🔥`);
     throw err; //to controller.js
@@ -64,6 +73,8 @@ export const loadSearchResult = async function (query) {
         image: rec.image_url,
       };
     });
+    //reset the pageNumber
+    state.search.page = 1;
     // console.log(state.search.result);
   } catch (err) {
     console.error(`${err} 🔥🔥🔥`);
@@ -89,4 +100,22 @@ export const updateServings = function (newServings) {
     //newQt=oldQT * newServings/oldServings // 2 * 8/4= 4
   });
   state.recipe.servings = newServings;
+};
+
+export const addBookmark = function (recipe) {
+  //Add bookMark
+  state.bookmarks.push(recipe);
+  //mark current recipe as the bookmarked
+  if ((recipe.id = state.recipe.id)) state.recipe.bookmarked = true;
+};
+
+/** 
+  common pattern when we add something we get the entire data(i.e recipe ) and when we want to delete something we only get the id
+ */
+export const deleteBookmark = function (id) {
+  //delete Bookmark
+  const index = state.bookmarks.findIndex(el => el.id === id);
+  state.bookmarks.splice(index, 1);
+  //mark current recipe as the NOT bookmarked
+  if (id === state.recipe.id) state.recipe.bookmarked = false;
 };

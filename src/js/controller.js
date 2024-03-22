@@ -5,6 +5,7 @@ import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultView from './views/resultView.js';
 import paginationView from '../js/views/paginationView.js';
+import bookmarkView from './views/bookmarkView.js';
 
 ///////////////////////////////////////
 /**the keep up the state from page,activate the hot module reloadiing,(Not real JavaScript) it come from parcel */
@@ -25,6 +26,7 @@ const controllRecipes = async function () {
       resultView will render again , this time the id of result will same as the hash in url therefore it got an preview__link--active class
      */
     resultView.update(model.getSearchResultsPage());
+    bookmarkView.update(model.state.bookmarks);
 
     //1. load Recipe
     /*
@@ -91,6 +93,17 @@ const controllPagination = function (goToPage) {
   //2.initial new pagination button
   paginationView.render(model.state.search);
 };
+
+const controllBookmark = function () {
+  // add/remove the bookmark
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
+  else model.deleteBookmark(model.state.recipe.id);
+  //update recipe view
+  recipeView.update(model.state.recipe);
+  //render bookmarks
+  bookmarkView.render(model.state.bookmarks);
+};
+
 /**
  * if you run this there will be no result,bcz nothing will be found on the Search-IN-UI ,In order to make this work now we need to listen for the event,clicking this button on search field  or submitting this form, on that event we call the  controllSearchResult() function,not in begining when the script loads */
 /** In order to do that we use the Publisher-subscriber pattern
@@ -103,6 +116,7 @@ const init = function () {
   //Subscriber
   recipeView.addHandlerRecipe(controllRecipes);
   recipeView.addHandlerUpdateServings(controllServings);
+  recipeView.addHandlerBookmark(controllBookmark);
   searchView.addHandlerSearch(controllSearchResult);
   paginationView.addHandlerClick(controllPagination);
 };

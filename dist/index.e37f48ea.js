@@ -596,6 +596,8 @@ var _resultViewJs = require("./views/resultView.js");
 var _resultViewJsDefault = parcelHelpers.interopDefault(_resultViewJs);
 var _paginationViewJs = require("../js/views/paginationView.js");
 var _paginationViewJsDefault = parcelHelpers.interopDefault(_paginationViewJs);
+var _bookmarkViewJs = require("./views/bookmarkView.js");
+var _bookmarkViewJsDefault = parcelHelpers.interopDefault(_bookmarkViewJs);
 ///////////////////////////////////////
 /**the keep up the state from page,activate the hot module reloadiing,(Not real JavaScript) it come from parcel */ // if (module.hot) {
 //   module.hot.accept();
@@ -612,6 +614,7 @@ const controllRecipes = async function() {
       select one of the result preview and it stay selected that hppned bcz as the hash in url change, recipe got loaded , the entire
       resultView will render again , this time the id of result will same as the hash in url therefore it got an preview__link--active class
      */ (0, _resultViewJsDefault.default).update(_modelJs.getSearchResultsPage());
+        (0, _bookmarkViewJsDefault.default).update(_modelJs.state.bookmarks);
         //1. load Recipe
         /*
      this loadRecipe funtion is async funtion this return a promise ,here we have to avoid the promise
@@ -669,6 +672,15 @@ const controllPagination = function(goToPage) {
     //2.initial new pagination button
     (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
 };
+const controllBookmark = function() {
+    // add/remove the bookmark
+    if (!_modelJs.state.recipe.bookmarked) _modelJs.addBookmark(_modelJs.state.recipe);
+    else _modelJs.deleteBookmark(_modelJs.state.recipe.id);
+    //update recipe view
+    (0, _recipeViewJsDefault.default).update(_modelJs.state.recipe);
+    //render bookmarks
+    (0, _bookmarkViewJsDefault.default).render(_modelJs.state.bookmarks);
+};
 /**
  * if you run this there will be no result,bcz nothing will be found on the Search-IN-UI ,In order to make this work now we need to listen for the event,clicking this button on search field  or submitting this form, on that event we call the  controllSearchResult() function,not in begining when the script loads */ /** In order to do that we use the Publisher-subscriber pattern
  * listen an event form the view(searchView.js) and pass the controller function so the handler function into the method that we build here
@@ -678,42 +690,13 @@ const controllPagination = function(goToPage) {
     //Subscriber
     (0, _recipeViewJsDefault.default).addHandlerRecipe(controllRecipes);
     (0, _recipeViewJsDefault.default).addHandlerUpdateServings(controllServings);
+    (0, _recipeViewJsDefault.default).addHandlerBookmark(controllBookmark);
     (0, _searchViewJsDefault.default).addHandlerSearch(controllSearchResult);
     (0, _paginationViewJsDefault.default).addHandlerClick(controllPagination);
 };
 init();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./model.js":"Y4A21","./views/recipeView.js":"l60JC","./views/searchView.js":"9OQAM","./views/resultView.js":"f70O5","../js/views/paginationView.js":"6z7bi"}],"gkKU3":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, "__esModule", {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === "default" || key === "__esModule" || Object.prototype.hasOwnProperty.call(dest, key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"49tUX":[function(require,module,exports) {
+},{"core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./model.js":"Y4A21","./views/recipeView.js":"l60JC","./views/searchView.js":"9OQAM","./views/resultView.js":"f70O5","../js/views/paginationView.js":"6z7bi","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./views/bookmarkView.js":"7YaI3"}],"49tUX":[function(require,module,exports) {
 "use strict";
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
 require("52e9b3eefbbce1ed");
@@ -2539,6 +2522,8 @@ parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
 parcelHelpers.export(exports, "loadSearchResult", ()=>loadSearchResult);
 parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage);
 parcelHelpers.export(exports, "updateServings", ()=>updateServings);
+parcelHelpers.export(exports, "addBookmark", ()=>addBookmark);
+parcelHelpers.export(exports, "deleteBookmark", ()=>deleteBookmark);
 var _regeneratorRuntime = require("regenerator-runtime");
 var _configJs = require("./config.js");
 var _helperJs = require("./helper.js");
@@ -2549,7 +2534,8 @@ const state = {
         result: [],
         page: 1,
         resultPerPage: (0, _configJs.RESULT_PER_Page)
-    }
+    },
+    bookmarks: []
 };
 const loadRecipe = async function(id) {
     try {
@@ -2565,6 +2551,10 @@ const loadRecipe = async function(id) {
             cookingTime: recipe.cooking_time,
             ingredients: recipe.ingredients
         };
+        /** 
+     as we got the loadSearchResult data and store it in state then we can check if there is the recipe with the same id  in bookmark state and if it is then we mark the current recipe that we just loaded from the API as bookmarked  set to true
+    */ if (state.bookmarks.some((bookmark)=>bookmark.id === id)) state.recipe.bookmarked = true;
+        else state.recipe.bookmarked = false;
     } catch (err) {
         console.error(`${err} \u{1F525}\u{1F525}\u{1F525}`);
         throw err; //to controller.js
@@ -2582,6 +2572,8 @@ const loadSearchResult = async function(query) {
                 image: rec.image_url
             };
         });
+        //reset the pageNumber
+        state.search.page = 1;
     // console.log(state.search.result);
     } catch (err) {
         console.error(`${err} \u{1F525}\u{1F525}\u{1F525}`);
@@ -2601,6 +2593,19 @@ const updateServings = function(newServings) {
     });
     state.recipe.servings = newServings;
 };
+const addBookmark = function(recipe) {
+    //Add bookMark
+    state.bookmarks.push(recipe);
+    //mark current recipe as the bookmarked
+    if (recipe.id = state.recipe.id) state.recipe.bookmarked = true;
+};
+const deleteBookmark = function(id) {
+    //delete Bookmark
+    const index = state.bookmarks.findIndex((el)=>el.id === id);
+    state.bookmarks.splice(index, 1);
+    //mark current recipe as the NOT bookmarked
+    if (id === state.recipe.id) state.recipe.bookmarked = false;
+};
 
 },{"regenerator-runtime":"dXNgZ","./config.js":"k5Hzs","./helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -2612,7 +2617,37 @@ const API_URL = "https://forkify-api.herokuapp.com/api/v2/recipes/";
 const TIMEOUT_SEC = 10;
 const RESULT_PER_Page = 10;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lVRAz":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, "__esModule", {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === "default" || key === "__esModule" || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"lVRAz":[function(require,module,exports) {
 /**Goal of this file/module to contain helper function that we can Reuse in our Project  */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getJSON", ()=>getJSON);
@@ -2669,6 +2704,14 @@ class RecipeView extends (0, _viewJsDefault.default) {
             if (updateTo > 0) handler(updateTo);
         });
     }
+    addHandlerBookmark(handler) {
+        //the element that we try to select btn with this class(btn--bookmark) does actaully not exist by the time that application is loaded,so it impossible to add a event listener that doesn't exist
+        this._parentElement.addEventListener("click", function(e) {
+            const btn = e.target.closest(".btn--bookmark");
+            if (!btn) return;
+            handler();
+        });
+    }
     //_generateMarkup must be unique to every single view
     _generateMarkup() {
         return `
@@ -2713,9 +2756,9 @@ class RecipeView extends (0, _viewJsDefault.default) {
           <use href="${0, _iconsSvgDefault.default}#icon-user"></use>
         </svg>
       </div>
-      <button class="btn--round">
+      <button class="btn--round btn--bookmark">
         <svg class="">
-          <use href="${0, _iconsSvgDefault.default}#icon-bookmark-fill"></use>
+          <use href="${0, _iconsSvgDefault.default}#icon-bookmark${this._data.bookmarked ? "-fill" : ""}"></use>
         </svg>
       </button>
     </div>
@@ -2767,7 +2810,7 @@ class RecipeView extends (0, _viewJsDefault.default) {
  *
  */ exports.default = new RecipeView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../../img/icons.svg":"loVOp","fractional":"3SU56","./view.js":"bWlJ9"}],"loVOp":[function(require,module,exports) {
+},{"url:../../img/icons.svg":"loVOp","./view.js":"bWlJ9","fractional":"3SU56","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"loVOp":[function(require,module,exports) {
 module.exports = require("9bcc84ee5d265e38").getBundleURL("hWUTQ") + "icons.dfd7a6db.svg" + "?" + Date.now();
 
 },{"9bcc84ee5d265e38":"lgJ39"}],"lgJ39":[function(require,module,exports) {
@@ -2805,7 +2848,94 @@ exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 exports.getOrigin = getOrigin;
 
-},{}],"3SU56":[function(require,module,exports) {
+},{}],"bWlJ9":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class View {
+    _data;
+    /**will get the data  */ render(data, render = true) {
+        if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
+        this._data = data;
+        const markup = this._generateMarkup();
+        if (!render) return markup;
+        this._clear();
+        this._parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    update(data) {
+        // if (!data || (Array.isArray(data) && data.length === 0))
+        //   return this.renderError();
+        this._data = data;
+        /**
+     create new markup but not Render it, all we gonna do is to genrate this markup and then compare that new html and current html and only change text and attributes that actually have change from old version to new version
+     */ const newMarkup = this._generateMarkup();
+        /**
+      convert this _generateMarkup which is a string to DOM-Node object that live in the memory and we compare with the actuall DOM that's on the page, newDOM- here bcm big object which is like virtual DOM, DOM thats not really lives on the page buts lives in memory, then we can use the dom as if its was on our page
+     
+     */ const newDOM = document.createRange().createContextualFragment(newMarkup);
+        const newElement = Array.from(newDOM.querySelectorAll("*"));
+        const currentElement = Array.from(this._parentElement.querySelectorAll("*"));
+        newElement.forEach((newEl, i)=>{
+            //curEl is the actuall element that currently on the page, that is the one we wanna update
+            const curEl = currentElement[i];
+            /**
+       -> isEqualNode() will compare the content of node
+       -> the value of nodeValue() will be null for most of the value expect if node is text, then we  get the content of text-node
+       */ //update change TEXT
+            if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue?.trim() !== "") curEl.textContent = newEl.textContent;
+            //update change Attributes
+            if (!newEl.isEqualNode(curEl)) Array.from(newEl.attributes).forEach((attr)=>{
+                curEl.setAttribute(attr.name, attr.value);
+            });
+        });
+    }
+    _clear() {
+        this._parentElement.innerHTML = "";
+    }
+    renderSpinner() {
+        const markup = `
+    <div class="spinner">
+    <svg>
+      <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
+    </svg>
+  </div>
+    `;
+        this._clear();
+        this._parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    renderError(message = this._errorMessage) {
+        const markup = `
+      <div class="error">
+            <div>
+              <svg>
+                <use href="${(0, _iconsSvgDefault.default)}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>
+            `;
+        this._clear();
+        this._parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    renderMessage(message = this._message) {
+        const markup = `
+      <div class="message">
+            <div>
+              <svg>
+                <use href="${(0, _iconsSvgDefault.default)}#icon-smile"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>
+            `;
+        this._clear();
+        this._parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+}
+exports.default = View;
+
+},{"url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3SU56":[function(require,module,exports) {
 /*
 fraction.js
 A Javascript fraction library.
@@ -3058,93 +3188,7 @@ Fraction.primeFactors = function(n) {
 };
 module.exports.Fraction = Fraction;
 
-},{}],"bWlJ9":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _iconsSvg = require("url:../../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-class View {
-    _data;
-    /**will get the data  */ render(data) {
-        if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
-        this._data = data;
-        const markup = this._generateMarkup();
-        this._clear();
-        this._parentElement.insertAdjacentHTML("afterbegin", markup);
-    }
-    update(data) {
-        // if (!data || (Array.isArray(data) && data.length === 0))
-        //   return this.renderError();
-        this._data = data;
-        /**
-     create new markup but not Render it, all we gonna do is to genrate this markup and then compare that new html and current html and only change text and attributes that actually have change from old version to new version
-     */ const newMarkup = this._generateMarkup();
-        /**
-      convert this _generateMarkup which is a string to DOM-Node object that live in the memory and we compare with the actuall DOM that's on the page, newDOM- here bcm big object which is like virtual DOM, DOM thats not really lives on the page buts lives in memory, then we can use the dom as if its was on our page
-     
-     */ const newDOM = document.createRange().createContextualFragment(newMarkup);
-        const newElement = Array.from(newDOM.querySelectorAll("*"));
-        const currentElement = Array.from(this._parentElement.querySelectorAll("*"));
-        newElement.forEach((newEl, i)=>{
-            //curEl is the actuall element that currently on the page, that is the one we wanna update
-            const curEl = currentElement[i];
-            /**
-       -> isEqualNode() will compare the content of node
-       -> the value of nodeValue() will be null for most of the value expect if node is text, then we  get the content of text-node
-       */ //update change TEXT
-            if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue?.trim() !== "") curEl.textContent = newEl.textContent;
-            //update change Attributes
-            if (!newEl.isEqualNode(curEl)) Array.from(newEl.attributes).forEach((attr)=>{
-                curEl.setAttribute(attr.name, attr.value);
-            });
-        });
-    }
-    _clear() {
-        this._parentElement.innerHTML = "";
-    }
-    renderSpinner() {
-        const markup = `
-    <div class="spinner">
-    <svg>
-      <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use>
-    </svg>
-  </div>
-    `;
-        this._clear();
-        this._parentElement.insertAdjacentHTML("afterbegin", markup);
-    }
-    renderError(message = this._errorMessage) {
-        const markup = `
-      <div class="error">
-            <div>
-              <svg>
-                <use href="${(0, _iconsSvgDefault.default)}#icon-alert-triangle"></use>
-              </svg>
-            </div>
-            <p>${message}</p>
-          </div>
-            `;
-        this._clear();
-        this._parentElement.insertAdjacentHTML("afterbegin", markup);
-    }
-    renderMessage(message = this._message) {
-        const markup = `
-      <div class="message">
-            <div>
-              <svg>
-                <use href="${(0, _iconsSvgDefault.default)}#icon-smile"></use>
-              </svg>
-            </div>
-            <p>${message}</p>
-          </div>
-            `;
-        this._clear();
-        this._parentElement.insertAdjacentHTML("afterbegin", markup);
-    }
-}
-exports.default = View;
-
-},{"url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9OQAM":[function(require,module,exports) {
+},{}],"9OQAM":[function(require,module,exports) {
 /**
  * this SearchView class not going to render anything  , all we want a query and listen for the event on  the button
  *
@@ -3177,31 +3221,45 @@ var _view = require("./view");
 var _viewDefault = parcelHelpers.interopDefault(_view);
 var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+var _previewView = require("./previewView");
+var _previewViewDefault = parcelHelpers.interopDefault(_previewView);
 class ResultView extends (0, _viewDefault.default) {
     _parentElement = document.querySelector(".results");
     _message = "";
     _errorMessage = "No recipe find for your query. Please try again ";
     _generateMarkup() {
-        return this._data.map(this._generateMarkupPreview).join("");
+        return this._data.map((result)=>(0, _previewViewDefault.default).render(result, false)).join("");
     }
-    _generateMarkupPreview(result) {
+}
+exports.default = new ResultView();
+
+},{"./view":"bWlJ9","url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./previewView":"1FDQ6"}],"1FDQ6":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./view");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+class PreviewView extends (0, _viewDefault.default) {
+    _parentElement = "";
+    _generateMarkup() {
         const id = window.location.hash.slice(1);
         return `
     <li class="preview">
-    <a class="preview__link ${result.id === id ? "preview__link--active" : ""}" href="#${result.id}">
+    <a class="preview__link ${this._data.id === id ? "preview__link--active" : ""}" href="#${this._data.id}">
       <figure class="preview__fig">
-        <img src="${result.image}" alt="Test" />
+        <img src="${this._data.image}" alt="Test" />
       </figure>
       <div class="preview__data">
-        <h4 class="preview__title">${result.title}</h4>
-        <p class="preview__publisher">${result.publisher}</p>
+        <h4 class="preview__title">${this._data.title}</h4>
+        <p class="preview__publisher">${this._data.publisher}</p>
       </div>
     </a>
   </li>
     `;
     }
 }
-exports.default = new ResultView();
+exports.default = new PreviewView();
 
 },{"./view":"bWlJ9","url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6z7bi":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -3280,6 +3338,25 @@ exports.default = new PaginationView(); /**
  * create a data-attribute to each of the buttons, which will contains pages we want to go to then in our code we can read that data make  our application go to that page
  */ 
 
-},{"./view":"bWlJ9","url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["hycaY","aenu9"], "aenu9", "parcelRequire6d3a")
+},{"./view":"bWlJ9","url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7YaI3":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./view");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+var _previewViewJs = require("./previewView.js");
+var _previewViewJsDefault = parcelHelpers.interopDefault(_previewViewJs);
+class BookmarkView extends (0, _viewDefault.default) {
+    _parentElement = document.querySelector(".bookmarks__list");
+    _message = "";
+    _errorMessage = "No bookmarks yet :( \n find a recipe and bookmark it ;)";
+    _generateMarkup() {
+        return this._data.map((bookmark)=>(0, _previewViewJsDefault.default).render(bookmark, false)).join("");
+    }
+}
+exports.default = new BookmarkView();
+
+},{"./view":"bWlJ9","url:../../img/icons.svg":"loVOp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./previewView.js":"1FDQ6"}]},["hycaY","aenu9"], "aenu9", "parcelRequire6d3a")
 
 //# sourceMappingURL=index.e37f48ea.js.map
