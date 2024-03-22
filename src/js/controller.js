@@ -19,6 +19,13 @@ const controllRecipes = async function () {
     //Guard clause
     if (!id) return;
     recipeView.renderSpinner();
+    //0. update result view to mark selected search result
+    /** 
+      select one of the result preview and it stay selected that hppned bcz as the hash in url change, recipe got loaded , the entire
+      resultView will render again , this time the id of result will same as the hash in url therefore it got an preview__link--active class
+     */
+    resultView.update(model.getSearchResultsPage());
+
     //1. load Recipe
     /*
      this loadRecipe funtion is async funtion this return a promise ,here we have to avoid the promise
@@ -68,7 +75,11 @@ const controllServings = function (newServings) {
   //update the  recipe servings (in state)
   model.updateServings(newServings);
   //update the recipe view
-  recipeView.render(model.state.recipe);
+  // recipeView.render(model.state.recipe);
+  /**
+    update method only update the attribute and DOM, so without  having the render the entire view
+   */
+  recipeView.update(model.state.recipe);
 };
 
 const controllPagination = function (goToPage) {
