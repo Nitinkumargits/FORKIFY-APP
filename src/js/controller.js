@@ -94,13 +94,17 @@ const controllPagination = function (goToPage) {
   paginationView.render(model.state.search);
 };
 
-const controllBookmark = function () {
+const controlAddBookmarks = function () {
   // add/remove the bookmark
   if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
   else model.deleteBookmark(model.state.recipe.id);
   //update recipe view
   recipeView.update(model.state.recipe);
   //render bookmarks
+  bookmarkView.render(model.state.bookmarks);
+};
+
+const controlBookmarks = function () {
   bookmarkView.render(model.state.bookmarks);
 };
 
@@ -114,9 +118,10 @@ const controllBookmark = function () {
 
 const init = function () {
   //Subscriber
+  bookmarkView.addHandlerRender(controlBookmarks);
   recipeView.addHandlerRecipe(controllRecipes);
   recipeView.addHandlerUpdateServings(controllServings);
-  recipeView.addHandlerBookmark(controllBookmark);
+  recipeView.addHandlerBookmark(controlAddBookmarks);
   searchView.addHandlerSearch(controllSearchResult);
   paginationView.addHandlerClick(controllPagination);
 };

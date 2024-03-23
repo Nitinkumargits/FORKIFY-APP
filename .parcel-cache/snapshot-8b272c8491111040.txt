@@ -5,7 +5,7 @@
 94D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\csso\lib\replace\atrule133549963614567769 1
 113D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\modules\esnext.reflect.metadata.js133550366397530265 0
 100D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\es\promise\finally.js133550366399110268 0
-62D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist133556055528830200 1
+62D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist133556389118515819 1
 80D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\@mischnic133549963117402239 1
 98D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\sass\types\value\color.d.ts133549964566024517 0
 109D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\full\string\virtual\italics.js133550366408370674 0
@@ -229,7 +229,7 @@
 142D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\@parcel\optimizer-svgo\node_modules\css-tree\lib\common\adopt-buffer.js133549963158969054 0
 133D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\@parcel\optimizer-svgo\node_modules\svgo\plugins\reusePaths.js133549963612497767 0
 104D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\modules\es.reflect.get.js133550366393810284 0
-78D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\controller.js133556038565246003 0
+78D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\controller.js133556387438143878 0
 74D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\helper.js133551554011761513 0
 120D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\@swc\helpers\src\_possible_constructor_return.mjs133549963647255956 0
 120D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\@babel\code-frame\node_modules\chalk\templates.js133549963233428780 0
@@ -257,7 +257,7 @@
 99D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\htmlparser2\lib\Tokenizer.js133549963229728647 0
 104D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\stable\string\includes.js133550366403140871 0
 110D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\es\array\virtual\copy-within.js133550366387740273 0
-73D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\model.js133556024888056885 0
+73D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\model.js133556389117451905 0
 101D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\svgo\plugins\preset-default.js133549963608719642 0
 94D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\micromatch\package.json133549963179850476 0
 92D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\domutils\lib\index.js133549963199647351 0
@@ -280,7 +280,7 @@
 102D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\full\symbol\iterator.js133550366408870655 0
 87D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\msgpackr\LICENSE133549963135280855 0
 113D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\caniuse-lite\data\features\font-kerning.js133549963645315377 0
-84D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\views\recipeView.js133556014736128580 0
+84D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\views\recipeView.js133556093258725595 0
 102D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\type-fest\ts41\pascal-case.d.ts133549963468066131 0
 100D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\css-select\lib\esm\general.js133549963296978029 0
 104D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\svgo\plugins\removeXMLProcInst.js133549963622989253 0
@@ -5473,7 +5473,7 @@
 101D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\actual\string\split.js133550366416420637 0
 108D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\modules\esnext.map.emplace.js133550366396830289 0
 106D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\modules\es.object.freeze.js133550366393320280 0
-85D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\views\previewView.js133556045528225411 0
+85D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\views\previewView.js133556099897078888 0
 112D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\modules\es.object.from-entries.js133550366393330274 0
 125D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\@parcel\optimizer-svgo\node_modules\css-tree\lib\lexer133549963630175927 1
 127D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\modules\es.object.get-own-property-descriptor.js133550366393340271 0
@@ -5819,7 +5819,7 @@
 129D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\@parcel\runtime-service-worker\lib\ServiceWorkerRuntime.js133549963148913540 0
 116D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\internals\async-iterator-iteration.js133550366384364349 0
 110D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\internals\async-iterator-map.js133550366384374359 0
-84D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.e37f48ea.js.map133556055528820204 0
+84D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.e37f48ea.js.map133556389118515819 0
 116D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\core-js\internals\async-iterator-prototype.js133550366384384351 0
 113D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\caniuse-lite\data\features\documenthead.js133549963644055571 0
 101D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\node_modules\@parcel\runtime-service-worker133549963199447331 1
@@ -9756,11 +9756,11 @@
 80D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.62406edb.js133549966071622896 0
 84D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.62406edb.js.map133549966071652900 0
 94D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.f7626f62.css.map.12824.df133550700620184828 0
-86D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\views\bookmarkView.js133556046042225909 0
-81D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\icons.dfd7a6db.svg133556055168837700 0
-80D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\logo.726d37a8.png133556055168867683 0
-81D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\icons.21bad73c.svg133556055168887702 0
-81D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.f7626f62.css133556055168887702 0
-83D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\favicon.8b2f57bf.png133556055168917688 0
-85D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.f7626f62.css.map133556055168917688 0
-80D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.e37f48ea.js133556055528790184 0
+86D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\src\js\views\bookmarkView.js133556387329111388 0
+81D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\icons.dfd7a6db.svg133556387213434225 0
+80D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\logo.726d37a8.png133556387213484232 0
+81D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.f7626f62.css133556387213514225 0
+85D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.f7626f62.css.map133556387213524224 0
+81D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\icons.21bad73c.svg133556387213651936 0
+83D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\favicon.8b2f57bf.png133556387213651936 0
+80D:\2.WEB DEV\4. JONAS\2. JavaScript\3. JS-App\Forkify-APP\dist\index.e37f48ea.js133556389118485910 0
