@@ -1,5 +1,5 @@
 # Forkify App : Build in pure JavaScript(Morden Application)
-Demo: https://stalwart-gecko-86180e.netlify.app/#5ed6604591c37cdc054bcd09
+Demo:https://forkify-recipes-nitin.netlify.app/
 ## Features
 - Search functionality :API search request
 - Result with paginations
